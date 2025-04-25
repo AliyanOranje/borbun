@@ -1,0 +1,198 @@
+<style>
+    .swatch-group {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }     
+  .swatch {
+    width: 30px;
+    height: 30px;
+    border-radius: 9999px;
+    border: 2px solid #ccc;
+    cursor: pointer;
+    position: relative;
+  }
+  .swatch.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  .swatch.selected {
+    border: 2px solid black;
+  }
+</style>
+<div></div>
+
+<product-wrapper>
+    <product-card class="custom-product-grid grid grid-cols-2 md:grid-cols-4 gap-4">
+    {% for block in section.blocks %}
+        {% assign product = block.settings.product %}
+        {% if product %}
+        <div class="product-card text-center border p-4">
+            <a href="{{ product.url }}">
+            <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" class="mb-2 mx-auto max-h-[200px]" />
+            <h3 class="text-lg font-semibold">{{ product.title }}</h3>
+            <p class="text-sm text-gray-600">{{ product.price | money }}</p>
+            </a>
+
+
+            {%- assign color_option_index = nil -%}
+            {%- for option in product.options_with_values -%}
+            {% if option.name == 'Color' %}
+                {% assign color_option_index = forloop.index0 %}
+            {% endif %}
+            {%- endfor -%}
+
+            
+
+            {%- if color_option_index != nil -%}
+            <div class="mt-3">
+                <label class="block text-sm font-medium">Select Color:</label>
+                <div class="swatch-group mt-1">
+                {% assign seen_colors = '' %}
+                {% for variant in product.variants %}
+                    {% assign color_value = variant.options[color_option_index] %}
+                    {% unless seen_colors contains color_value %}
+                    <div class="swatch {% unless variant.available %}disabled{% endunless %}" 
+                        title="{{ color_value }}"
+                        style="background-color: {{ color_value | downcase }};">
+                    </div>
+                    {% assign seen_colors = seen_colors | append: ',' | append: color_value | append: ',' %}
+                    {% endunless %}
+                {% endfor %}
+                </div>
+            </div>
+            {%- endif -%}
+
+
+            <form method="post" action="/cart/add">
+                <input type="hidden" name="id" value="" class="variant-id-input">
+
+                {% assign first_variant = product.variants.first %}
+                <add-to-cart
+                variant-id="{{ first_variant.id }}"
+                class="mt-3 bg-black text-white py-2 px-4 rounded hover:bg-gray-800 w-full add-to-cart-btn">
+                Add to Cart
+                </add-to-cart>
+
+            </form>
+        </div>
+        {% endif %}
+    {% endfor %}
+    </product-card>
+</product-wrapper>
+
+
+<script>
+const arraydec = [1, 2, 3, 4];
+const revarray = [];
+const revarrayforeach = [];
+
+for (var a = arraydec.length - 1; a >= 0; a-- ){
+ revarray.push(arraydec[a]);
+}
+
+console.log(JSON.stringify(revarray));
+
+
+arraydec.forEach(function(item){
+  revarrayforeach.unshift(item);
+});
+
+console.log(JSON.stringify(revarrayforeach));
+</script>
+
+<script>
+  class ProductAddToCartComponent extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      this.initAddToCart();
+    }
+
+    initAddToCart() {
+      const variantId = this.getAttribute('variant-id');
+      const button = this;
+      
+      // Create hidden input and form
+      const form = document.createElement('form');
+      form.method = 'post';
+      form.action = '/cart/add';
+
+      const hiddenInput = document.createElement('input');
+      hiddenInput.type = 'hidden';
+      hiddenInput.name = 'id';
+      hiddenInput.value = variantId;
+
+      const submitBtn = document.createElement('button');
+      submitBtn.type = 'submit';
+      submitBtn.textContent = this.textContent.trim();
+      submitBtn.className = this.className;
+
+      // Clear shadow content and add form
+      this.innerHTML = '';
+      form.appendChild(hiddenInput);
+      form.appendChild(submitBtn);
+      this.appendChild(form);
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        if (!variantId) {
+          alert('No variant available to add to cart.');
+          return;
+        }
+
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ id: variantId, quantity: 1 })
+        })
+          .then(res => res.json())
+          .then(data => {
+            console.log('Added to cart:', data);
+            alert('Added to cart!');
+          })
+          .catch(err => {
+            console.error('Cart error:', err);
+            alert('Error adding to cart');
+          });
+      });
+    }
+  }
+
+  customElements.define('add-to-cart', ProductAddToCartComponent);
+</script>
+
+
+{% schema %}
+{
+  "name": "custom componenet",
+  "class": "section",
+  "settings": [
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Select Product"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "custom componenet"
+    }
+  ]
+}
+{% endschema %}
