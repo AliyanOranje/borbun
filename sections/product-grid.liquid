@@ -201,7 +201,7 @@
               'Content-Type': 'application/json',
               'Accept': 'application/json'
             },
-            body: JSON.stringify({ id: variantId, quantity: 1 })
+            body: JSON.stringify({ id: variantId, quantity: quantity  })
           })
             .then(res => res.json())
             .then(data => {
