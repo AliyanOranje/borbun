@@ -166,16 +166,42 @@
         card.querySelector('form').addEventListener('submit', function (e) {
           e.preventDefault();
           const variantId = hiddenInput.value;
+          const quantityInput = card.querySelector('.product_quantity');
+          const quantity = parseInt(quantityInput?.value) || 1;
 
           if (!variantId) return alert('Please select available options.');
 
+          const isRemove = e.submitter?.classList.contains('remove-from-cart-btn');
+
+          if (isRemove) {
+            fetch('/cart/change.js', {
+                method: 'POST',
+                headers: {
+                  'content-type': 'application/json',
+                  'Accept': 'application/json'
+                },
+                body: JSON.stringify(
+                  {id: variantId, quantity: 0
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+              console.log('Remove from cart:', data);
+              alert('Remove from cart!');
+            })
+            .catch(err => {
+              console.error('Cart removal error:', err);
+              alert('Cart removal error');
+            });
+          }
+          else{
           fetch('/cart/add.js', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json'
             },
-            body: JSON.stringify({ id: variantId, quantity: 1 })
+            body: JSON.stringify({ id: variantId, quantity: quantity  })
           })
             .then(res => res.json())
             .then(data => {
@@ -186,6 +212,7 @@
               console.error('Cart error:', err);
               alert('Error adding to cart');
             });
+          }
         });
       });
     }
