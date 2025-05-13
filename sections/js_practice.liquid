@@ -1,0 +1,59 @@
+<div class="jscall" id="reverse-array">
+
+</div>
+
+
+<script type="text/javascript">
+const array= ["a", "b", "c", "d"];
+const revarra= [];
+
+const outputdiv = document.getElementById('reverse-array');
+
+for (let i = array.length-1; i >=0; i-- ){
+    revarra.push(array[i]);
+    outputdiv.textContent = revarra.join(', ');
+}
+
+console.log(revarra);
+</script>
+<script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+    const triggerDivs = document.querySelectorAll('.elementclassname'); // Replace with your class name
+    if (triggerDivs.length > 0) {
+      triggerDivs.forEach(function(triggerDiv) {
+        triggerDiv.style.cursor = 'pointer'; // Optional: pointer cursor
+        triggerDiv.addEventListener('click', function() {
+          if (window.bottlenexus && typeof window.bottlenexus.addToCart === 'function') {
+            window.bottlenexus.addToCart(4967, "96ad53ee-207b-11f0-be6e-0242ac110002", {
+              quantity: 1,
+              recurrence: 'one-time',
+              donation: 'enforce',
+              engravingLines: null
+            });
+          } else {
+            console.error('BottleNexus BuyButton is not loaded yet.');
+          }
+        });
+      });
+    } else {
+      console.error('No trigger elements found.');
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "JS Practice",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+  ],
+  "presets": [
+    {
+      "name": "JS Practice"
+    }
+  ]
+}
+{% endschema %}

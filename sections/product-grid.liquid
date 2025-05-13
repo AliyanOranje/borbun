@@ -20,9 +20,12 @@
   .swatch.selected {
     border: 2px solid black;
   }
+<<<<<<< HEAD
   .custom-product-grid{
     background:red;
   }
+=======
+>>>>>>> development2
 </style>
 <product-wrapper>
     <product-card class="custom-product-grid grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -169,6 +172,7 @@
         card.querySelector('form').addEventListener('submit', function (e) {
           e.preventDefault();
           const variantId = hiddenInput.value;
+<<<<<<< HEAD
           const quantityInput = card.querySelector('.product_quantity');
           const quantity = parseInt(quantityInput?.value) || 1;
 
@@ -198,13 +202,22 @@
             });
           }
           else{
+=======
+
+          if (!variantId) return alert('Please select available options.');
+
+>>>>>>> development2
           fetch('/cart/add.js', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json'
             },
+<<<<<<< HEAD
             body: JSON.stringify({ id: variantId, quantity: quantity  })
+=======
+            body: JSON.stringify({ id: variantId, quantity: 1 })
+>>>>>>> development2
           })
             .then(res => res.json())
             .then(data => {
@@ -215,7 +228,10 @@
               console.error('Cart error:', err);
               alert('Error adding to cart');
             });
+<<<<<<< HEAD
           }
+=======
+>>>>>>> development2
         });
       });
     }
